@@ -1,34 +1,57 @@
+import 'dart:io';
+import 'package:todo_app/todo.dart';
+import 'package:todo_app/todo_repositore.dart';
+
 void main() {
-  print('Hello word');
-  String name = 'Ренат';
-  String? name2 = null;
-  var count = 0;
-  var title = "Учить Rust";
-  var x = 5;
-  // x = "hello";
-
-  final id = 5;
-  const appName = "TodoApp";
-  print('$name,$name2,${count + 5},$title,$appName,$id,$x');
-
-  List<String> tags = ['институт', 'дом'];
-  Map<String, dynamic> data = {'key': 'value', 'num': 10};
-  Set<int> numbera = {1, 2, 3};
-  String greet(String name) => 'Hello $name';
-
-  printTodo(title: "Купить еду");
-  printTodo(title: "Сделать дз", done: true);
+  TodoRepositore todo = TodoRepositore();
+  printMenu();
+  while (true) {
+    stdout.write('> ');
+    String? input = stdin.readLineSync();
+    if (input == null) {
+      continue;
+    }
+    input = input.trim();
+    if (input.isEmpty) {
+      continue;
+    }
+    bool shouldExit = handeleCommand(repo, input);
+    if (shouldExit) {
+      break;
+    }
+  }
 }
 
-void printTodo({required String title, bool done = false}) {
-  print('${done ? '+' : '-'} $title');
+bool handeleCommand(repo, String input) {}
+
+void printMenu() {
+  print('Приложение TODO');
+  print('Команды');
+  print(' add <текст>     -добавить задачу');
+  print(' list <текст     -показать список>');
+  print(' done<id>        -отметить выполненной');
+  print(' delete          -удалить задачу');
+  print(' exit            - выход');
+  print('');
 }
 
-class Todo {
-  final int id;
-  String title;
-  bool isDone;
-  Todo({required this.id, required this.title, this.isDone = false});
+void addCommand(TodoRepositore repo, String input) {
+  if (input.length <= 4) {
+    print('Ошибка: введите текст');
+    return;
+  }
+  String title = input.substring(4).trim();
+  repo.add(title);
+  print('Задача добавлена');
 }
 
-
+void listCommand(TodoRepositore repo) {
+  List<Todo> todos = repo.getAll();
+  if (todos.isEmpty) {
+    print('Список задач пуст');
+    return;
+  }
+  for (var todo in todos){
+    print(todo);
+  }
+}
